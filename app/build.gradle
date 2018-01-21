@@ -21,18 +21,18 @@ android {
     }
 }
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+kotlin.experimental.coroutines "enable"
 
-    compile 'io.reactivex.rxjava2:rxjava:2.1.8'
-    compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
-
-    testCompile 'junit:junit:4.12'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-}
 repositories {
     mavenCentral()
+    maven { url 'https://maven.google.com' }
+    maven { url 'https://jitpack.io' }
+}
+dependencies {
+    compile 'io.reactivex.rxjava2:rxjava:2.1.8'
+    compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    compile 'com.github.y2k:litho-elmish:99b2f6de2c'
+
+    testCompile 'junit:junit:4.12'
 }

@@ -8,13 +8,16 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import y2k.rxstateexample.Result.*
-import y2k.rxstateexample.Services.SearchEngine
-import y2k.rxstateexample.Services.SearchEngine.Google
-import y2k.rxstateexample.Services.SearchEngine.Yandex
 import y2k.rxstateexample.StateManager.Event.SearchRequest
 import y2k.rxstateexample.StateManager.Event.SearchResult
 import y2k.rxstateexample.StateManager.Model
+import y2k.rxstateexample.common.Result
+import y2k.rxstateexample.common.Result.*
+import y2k.rxstateexample.common.Services
+import y2k.rxstateexample.common.Services.SearchEngine
+import y2k.rxstateexample.common.Services.SearchEngine.Google
+import y2k.rxstateexample.common.Services.SearchEngine.Yandex
+import y2k.rxstateexample.common.toResult
 
 object StateManager {
 

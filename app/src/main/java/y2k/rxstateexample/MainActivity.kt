@@ -9,53 +9,61 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import y2k.rxstateexample.Result.*
+import y2k.rxstateexample.Services.SearchEngine
 import y2k.rxstateexample.Services.SearchEngine.Google
 import y2k.rxstateexample.Services.SearchEngine.Yandex
-import y2k.rxstateexample.StateManager.Event.SearchGoogle
-import y2k.rxstateexample.StateManager.Event.SearchYandex
+import y2k.rxstateexample.StateManager.Event.SearchRequest
+import y2k.rxstateexample.StateManager.Event.SearchResult
 import y2k.rxstateexample.StateManager.Model
 
 object StateManager {
 
-    /** Состояние всей программы */
+    /** Стейт всего окна */
     data class Model(
-        /** Поиск в процессе */
+        /** Поиск в процессе (те если true, то надо показывать прогресс-бар) */
         val isFlight: Boolean,
         /** Результаты поиска */
         val searchResults: List<String>,
         /** Ошибка последнего запроса */
         val error: String?)
 
-    /** События от UI */
+    /** События */
     sealed class Event {
-        /** Искать в Google */
-        class SearchGoogle(val query: String) : Event()
+        /** Событие "пользователь нажал 'искать' с заданными параметрами" */
+        class SearchRequest(val query: String, val engine: SearchEngine) : Event()
 
-        /** Искать в Yandex */
-        class SearchYandex(val query: String) : Event()
+        /** Событие "результат поиска" */
+        class SearchResult(val result: Result<List<String>, Throwable>) : Event()
     }
 
-    /** Начальное состояние программы */
+    /** Начальное состояние окна */
     val init = Model(false, emptyList(), null)
 
-    /** Создать асинхронный запрос по заданному эвенте */
-    fun createObservable(event: Event): Observable<List<String>> =
+    /** Создать асинхронный запрос по заданному эвенту */
+    fun createObservable(event: Event): Observable<Event> =
         when (event) {
-            is SearchGoogle -> Services.search(event.query, Google)
-            is SearchYandex -> Services.search(event.query, Yandex)
+            is SearchRequest ->
+                Services.search(event.query, event.engine).toResult().map(::SearchResult)
+            else -> Observable.never()
         }
 
     /** Обновляет состояние программы в зависимости от евентов */
-    fun update(model: Model, result: Result<List<String>, Throwable>): Model =
-        when (result) {
-            InFlight -> model.copy(isFlight = true, error = null)
-            is Success -> model.copy(isFlight = false, searchResults = result.value)
-            is Failure -> {
-                result.error.printStackTrace()
-                model.copy(isFlight = false,
-                    searchResults = emptyList(),
-                    error = result.error.message)
+    fun update(model: Model, event: Event): Model =
+        when (event) {
+            is SearchResult -> {
+                val result = event.result
+                when (result) {
+                    InFlight -> model.copy(isFlight = true, error = null)
+                    is Success -> model.copy(isFlight = false, searchResults = result.value)
+                    is Failure -> {
+                        result.error.printStackTrace()
+                        model.copy(isFlight = false,
+                            searchResults = emptyList(),
+                            error = result.error.message)
+                    }
+                }
             }
+            else -> model
         }
 }
 
@@ -76,10 +84,10 @@ class MainActivity : Activity() {
 
         Observable
             .merge(
-                RxView.clicks(google).map { SearchGoogle(edit.text.toString()) },
-                RxView.clicks(yandex).map { SearchYandex(edit.text.toString()) })
+                RxView.clicks(google).map { SearchRequest(edit.text.toString(), Google) },
+                RxView.clicks(yandex).map { SearchRequest(edit.text.toString(), Yandex) })
             .publish { shared ->
-                shared.flatMap { StateManager.createObservable(it).wrapToResult() }
+                shared.flatMap { StateManager.createObservable(it) }
             }
             .observeOn(Schedulers.from(::runOnUiThread))
             .scan(StateManager.init, StateManager::update)

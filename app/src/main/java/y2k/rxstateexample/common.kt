@@ -28,7 +28,7 @@ object Services {
             .delay((500 + Math.random() * 1500).toLong(), TimeUnit.MILLISECONDS)
 }
 
-fun <R> Observable<R>.wrapToResult(): Observable<Result<R, Throwable>> =
+fun <R> Observable<R>.toResult(): Observable<Result<R, Throwable>> =
     map<Result<R, Throwable>> { Success(it) }
         .onErrorReturn { error -> Failure(error) }
         .startWith(InFlight)

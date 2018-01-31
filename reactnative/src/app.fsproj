@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Common.fs" />
+    <Compile Include="Flow.fs" />
     <Compile Include="Elm.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>

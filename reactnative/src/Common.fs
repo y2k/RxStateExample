@@ -3,6 +3,10 @@ namespace Common
 open System
 open Fable.PowerPack
 
+module Utils =
+    let unit f a () = f a
+    let flip f a b = f b a
+
 module CommonUi =
     open Fable.Helpers.ReactNative
     open Fable.Helpers.ReactNative.Props
@@ -20,6 +24,15 @@ module CommonUi =
               TouchableHighlightProperties.UnderlayColor "#e0e0e0"
               OnPress (fun _ -> dispatch msg) ]
             [ text [] title ]
+
+    let button title f disabled =
+        touchableHighlight 
+            [ TouchableHighlightProperties.Style [ Padding 12.; BackgroundColor "#f0f0f0" ] 
+              TouchableHighlightProperties.ActiveOpacity 0.7
+              TouchableHighlightProperties.UnderlayColor "#e0e0e0"
+              OnPress <| if disabled then ignore else f ]
+            [ text [ TextProperties.Style [ Color <| if disabled then "#d0d0d0" else "#010101" ] ] 
+                   title ]
 
     let labeledTextInput props title (error: String option) =
         view [] 

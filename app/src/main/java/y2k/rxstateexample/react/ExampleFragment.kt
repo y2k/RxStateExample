@@ -20,12 +20,14 @@ class ExampleFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         retainInstance = true
 
+        // Подписка на обновления "стейта" компонента
         component.listenStateChanges { state ->
             email.error = if (state.emailValid) null else "E-mail is invalid"
             button.isEnabled = state.buttonEnabled
             button.text = state.buttonText
         }
 
+        // Отсылка событий UI в компонент
         email.addTextChangedListener { component.acceptEvent(Events.EmailChanged(it)) }
         name.addTextChangedListener { component.acceptEvent(Events.NameChanged(it)) }
         surname.addTextChangedListener { component.acceptEvent(Events.SurnameChanged(it)) }

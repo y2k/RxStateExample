@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.1"
+    buildToolsVersion "27.0.2"
     defaultConfig {
         applicationId "y2k.rxstateexample"
         minSdkVersion 21
@@ -33,6 +33,13 @@ dependencies {
     compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     compile 'com.github.y2k:litho-elmish:99b2f6de2c'
+
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.22.2'
+    compile 'org.koin:koin-android:0.8.2'
+
+    ext.support_version = '27.0.2'
+    compile "com.android.support:support-v4:$support_version"
+    compile "com.android.support:recyclerview-v7:$support_version"
 
     testCompile 'junit:junit:4.12'
 }

@@ -8,35 +8,33 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_example.*
 import org.koin.android.ext.android.inject
 import y2k.rxstateexample.R
-import y2k.rxstateexample.common.addTextChangedListener
-import y2k.rxstateexample.react.ExampleComponent.Events
-import y2k.rxstateexample.react.ExampleComponent.State
+import y2k.rxstateexample.common.onTextChanged
 
 class ExampleFragment : Fragment() {
 
-    private val component by inject<Component<State, Events>>()
+    private val component: ExampleComponent by inject()
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onResume() {
+        super.onResume()
         retainInstance = true
 
         // Подписка на обновления "стейта" компонента
-        component.listenStateChanges { state ->
+        component.onStateChanged { state ->
             email.error = if (state.emailValid) null else "E-mail is invalid"
             button.isEnabled = state.buttonEnabled
             button.text = state.buttonText
         }
 
         // Отсылка событий UI в компонент
-        email.addTextChangedListener { component.acceptEvent(Events.EmailChanged(it)) }
-        name.addTextChangedListener { component.acceptEvent(Events.NameChanged(it)) }
-        surname.addTextChangedListener { component.acceptEvent(Events.SurnameChanged(it)) }
-        button.setOnClickListener { component.acceptEvent(Events.Clicked) }
+        email.onTextChanged { component.update(ExampleComponent.Events.EmailChanged(it)) }
+        name.onTextChanged { component.update(ExampleComponent.Events.NameChanged(it)) }
+        surname.onTextChanged { component.update(ExampleComponent.Events.SurnameChanged(it)) }
+        button.setOnClickListener { component.update(ExampleComponent.Events.Clicked) }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        component.listenStateChanges {}
+    override fun onPause() {
+        super.onPause()
+        component.onStateChanged(null)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =

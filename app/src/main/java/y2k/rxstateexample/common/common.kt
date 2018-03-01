@@ -10,7 +10,6 @@ import kotlinx.coroutines.experimental.delay
 import org.koin.android.ext.android.startKoin
 import org.koin.dsl.module.applicationContext
 import y2k.rxstateexample.common.Result.*
-import y2k.rxstateexample.react.Component
 import y2k.rxstateexample.react.ExampleComponent
 import y2k.rxstateexample.react.ExampleFragment
 import java.util.concurrent.TimeUnit
@@ -80,7 +79,7 @@ class App : Application() {
                         }
                     } as Service
                 }
-                factory { ExampleComponent(get()) as Component<ExampleComponent.State, ExampleComponent.Events> }
+                factory { ExampleComponent(get()) }
             }))
     }
 }

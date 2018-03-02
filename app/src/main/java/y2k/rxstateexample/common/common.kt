@@ -1,17 +1,15 @@
 package y2k.rxstateexample.common
 
 import android.app.Application
-import android.os.Bundle
-import android.support.v4.app.FragmentActivity
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.soloader.SoLoader
 import io.reactivex.Observable
 import kotlinx.coroutines.experimental.delay
 import org.koin.android.ext.android.startKoin
 import org.koin.dsl.module.applicationContext
+import y2k.rxstateexample.actors.ExampleActorComponent
 import y2k.rxstateexample.common.Result.*
 import y2k.rxstateexample.react.ExampleComponent
-import y2k.rxstateexample.react.ExampleFragment
 import java.util.concurrent.TimeUnit
 
 object Services {
@@ -80,21 +78,11 @@ class App : Application() {
                     } as Service
                 }
                 factory { ExampleComponent(get()) }
+                factory { ExampleActorComponent(get()) }
             }))
     }
 }
 
-class ExampleActivity : FragmentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (savedInstanceState == null)
-            supportFragmentManager
-                .beginTransaction()
-                .add(android.R.id.content, ExampleFragment())
-                .commit()
-    }
-}
 
 interface Service {
     fun readUser(): User?

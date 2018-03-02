@@ -28,13 +28,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".common.ExampleActivity"
-            android:label="React example">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
+        <activity android:name=".common.ExampleActivity"
+                  android:exported="true"/>
+        <activity android:name=".common.ExampleActorActivity"
+                  android:exported="true"/>
     </application>
 </manifest>
